@@ -27,12 +27,12 @@ public:
         end = 1;
 
         matrix = new int* [countVertices];
-        for (int i = 0; i < countVertices; ++i) {
+        for (int i = 0; i < countVertices; i++) {
             matrix[i] = new int[countVertices];
         }
 
-        for (int i = 0; i < countVertices; ++i) {
-            for (int j = 0; j < countVertices; ++j) {
+        for (int i = 0; i < countVertices; i++) {
+            for (int j = 0; j < countVertices; j++) {
                 matrix[i][j] = i * countVertices + j;
             }
         }
@@ -81,12 +81,12 @@ public:
 
     MyGraph(int countVertices, int start, int end) : countVertices(countVertices), start(start), end(end) {
         matrix = new int* [countVertices];
-        for (int i = 0; i < countVertices; ++i) {
+        for (int i = 0; i < countVertices; i++) {
             matrix[i] = new int[countVertices];
         }
 
-        for (int i = 0; i < countVertices; ++i) {
-            for (int j = 0; j < countVertices; ++j) {
+        for (int i = 0; i < countVertices; i++) {
+            for (int j = 0; j < countVertices; j++) {
                 matrix[i][j] = i * countVertices + j;
             }
         }
@@ -96,19 +96,19 @@ public:
         : countVertices(countVertices), start(start), end(end), bidirectional(bidirectional) {
 
         matrix = new int* [countVertices];
-        for (int i = 0; i < countVertices; ++i) {
+        for (int i = 0; i < countVertices; i++) {
             matrix[i] = new int[countVertices];
         }
 
-        for (int i = 0; i < countVertices; ++i) {
-            for (int j = 0; j < countVertices; ++j) {
+        for (int i = 0; i < countVertices; i++) {
+            for (int j = 0; j < countVertices; j++) {
                 matrix[i][j] = i * countVertices + j;
             }
         }
     }
 
     ~MyGraph() {
-        for (int i = 0; i < countVertices; ++i) {
+        for (int i = 0; i < countVertices; i++) {
             delete[] matrix[i];
         }
         delete[] matrix;
@@ -116,12 +116,12 @@ public:
 
     void buildMatrix() {
         matrix = new int* [countVertices];
-        for (int i = 0; i < countVertices; ++i) {
+        for (int i = 0; i < countVertices; i++) {
             matrix[i] = new int[countVertices];
         }
 
-        for (int i = 0; i < countVertices; ++i) {
-            for (int j = 0; j < countVertices; ++j) {
+        for (int i = 0; i < countVertices; i++) {
+            for (int j = 0; j < countVertices; j++) {
                 matrix[i][j] = 0;
             }
         }
@@ -131,7 +131,7 @@ public:
         priority_queue<Way, vector<Way>, compareByLength> puti;
         int way_start = start;
 
-        for (int i = 0; i < countVertices; ++i) {
+        for (int i = 0; i < countVertices; i++) {
             if (i == way_start - 1) continue;
             int dlina = matrix[way_start][i];
 
@@ -150,7 +150,7 @@ public:
             puti.pop();
             way_start = bestPath.way[bestPath.way.size() - 1];
 
-            for (int j = 0; j < countVertices; ++j) {
+            for (int j = 0; j < countVertices; j++) {
                 if (find(bestPath.way.begin(), bestPath.way.end(), j + 1) != bestPath.way.end()) continue;
 
                 int len_way = matrix[way_start][j];
@@ -173,15 +173,15 @@ public:
         os << "MyGraph: " << obj.countVertices << endl;
 
         int maxLen = 2;
-        for (int i = 0; i < obj.countVertices; ++i) {
-            for (int j = 0; j < obj.countVertices; ++j) {
+        for (int i = 0; i < obj.countVertices; i++) {
+            for (int j = 0; j < obj.countVertices; j++) {
                 int len = to_string(obj.matrix[i][j]).length();
                 maxLen = max(maxLen, len);
             }
         }
 
-        for (int i = 0; i < obj.countVertices; ++i) {
-            for (int j = 0; j < obj.countVertices; ++j) {
+        for (int i = 0; i < obj.countVertices; i++) {
+            for (int j = 0; j < obj.countVertices; j++) {
                 os << setw(maxLen) << obj.matrix[i][j] << "  ";
             }
             os << endl;

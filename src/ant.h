@@ -11,6 +11,8 @@ public:
 
 	bool alive = true;
 	int start_note = 1;
+	double chance_way = 1.;
+	double amount_pheromone_on_way = 0.;
 
 	Ant() : Way() {}
 	Ant(const vector<int>& way, int len) : Way(way, len) {}
@@ -26,12 +28,21 @@ public:
 	}
 
 
-	bool passed_through_point(int where_to, int where_from) {
+	bool passed_through_point(int where_from, int where_to) {
+		//cout << "where_to: " << where_to << " where_from: " << where_from << '\n';
+
+		if (start_note == where_from && way[0] == where_to)
+			return true;
+
+		if (start_note == where_to && last() == where_from)
+			return true;
 
 		for (int w = 0; w < size()-1; w++) {
 
-			if (way[w] == where_from && way[w + 1] == where_to)
+			if (way[w] == where_from && way[w + 1] == where_to) {
+				//cout << "where_to: " << way[w] << " where_from: " << way[w + 1] << '\n';
 				return true;
+			}
 					
 		}
 
@@ -74,7 +85,7 @@ public:
 	int choosingWay(vector<double> weights_ways, double sum_weight) {
 
 		if (weights_ways.size() <= 0 || sum_weight == 0)
-			return 0;
+			return -1;
 
 		if (weights_ways.size() == 1) {
 			return 0;
@@ -90,7 +101,7 @@ public:
 		double random_number = dist(gen);
 
 		double normalized_chance;
-		double accumulate_probability = 0;
+		double accumulate_probability = 0.;
 
 		int selected_way;
 		/*cout << "sum: " << sum_weight << " | " << weights_ways << '\n';*/
@@ -100,20 +111,22 @@ public:
 		for (int w = 0; w < weights_ways.size(); w++) {
 
 			normalized_chance = weights_ways[w] / sum_weight;
-
-			if (weights_ways[w] == start_note)
-				continue;
-
-			
+			accumulate_probability += normalized_chance;
+						
 		/*	cout << "weights_ways[w]: " << weights_ways[w] << '\n';
 			cout << "normalized_chance: " << normalized_chance << '\n';*/
-			accumulate_probability += normalized_chance;
+			
 			/*cout << "accumulate_probability: " << accumulate_probability << '\n';
 			cout << "random_number: " << random_number << '\n';
 			cout << "w: " << w << '\n';*/
 
-
+			
 			if (random_number <= accumulate_probability) {
+				//if (start_note >= 24)
+				//	cout << "chance_way: " << chance_way << " normalized_chance:" << normalized_chance << "sum: " << sum_weight << " | " << weights_ways[w];
+				//chance_way *= normalized_chance;
+				//if (start_note >= 24)
+				//	cout << " new_chance_way: " << chance_way << " random_number:" << random_number << '\n';
 				return w;
 			}
 
