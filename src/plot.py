@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 
-filename = "../result/output.txt"
+filename = "result/output.txt"
 last_result = 1000
 best_result = 10000000
 way = ""
@@ -56,7 +56,7 @@ def read_data(lines):
     try:
         min_data = min(data)
         min_index = data.index(min_data)
-        way = all_data[min_index][2:-1]
+        way = all_data[min_index][3:-1]
         amount_pheromone_on_way = all_data[min_index][1]
         chance_way = all_data[min_index][0]
         return min_data
@@ -72,7 +72,13 @@ def plot_data(data):
     data_amount_pheromone_on_way = []
 
     while True:
-        lines = read_and_delete_lines(filename, 10)
+        lines = read_and_delete_lines(filename, 51)
+
+        # Проверяем, есть ли новые данные
+        if not lines:
+            plt.pause(0.1)  # Ждём немного перед следующим циклом
+            continue
+
         global last_result
         last_result = read_data(lines)
         global best_result
@@ -86,6 +92,7 @@ def plot_data(data):
             best_way = way
             print(best_result)
             print(best_way)
+
         data.append(last_result)
         data_chance_way.append(chance_way)
         data_amount_pheromone_on_way.append(amount_pheromone_on_way)
