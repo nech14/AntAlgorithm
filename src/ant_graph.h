@@ -2,7 +2,7 @@
 #define ANT_GRAPH_H
 
 #include <utility> 
-
+#include "../dependencies\include\nlohmann\json.hpp"
 
 
 using namespace std;
@@ -29,11 +29,37 @@ public:
 	bool work_with_alive_ants = true;
 	int start_node = -1;
 
+	bool logs = true;
+
 
 	AntGraph() : MyGraph() {
 		create_r_matrix();
 	}
-	AntGraph(const string& fileName) : MyGraph(fileName) {
+	/*AntGraph(const string& fileName) : MyGraph(fileName) {
+		create_r_matrix();
+	}*/
+	AntGraph(const string& jsonFileName) : MyGraph(jsonFileName) {
+		nlohmann::json objJson;
+
+		fstream fileInput;
+		fileInput.open(jsonFileName);
+
+		fileInput >> objJson;
+
+		fileInput.close();
+
+		a = objJson["a"];
+		b = objJson["b"];
+		p = objJson["p"];
+		q = objJson["q"];
+		start_r = objJson["start_r"];
+		minChanceTurn = objJson["minChanceTurn"];
+		count_repetitions = objJson["count_repetitions"];
+		count_ants = objJson["count_ants"];
+		start_node = objJson["start_node"];
+		work_with_alive_ants = objJson["work_with_alive_ants"];
+		logs = objJson["logs"];
+
 		create_r_matrix();
 	}
 	AntGraph(const string& fileName, bool bidirectional) : MyGraph(fileName, bidirectional) {
@@ -291,10 +317,12 @@ public:
 			}
 
 			file.close(); 
-			cout << "Data written to " << filename << "\n";
+			if (logs)
+				cout << "Data written to " << filename << "\n";
 		}
 		else {
-			cout << "Failed to open " << filename << "\n";
+			if (logs)
+				cout << "Failed to open " << filename << "\n";
 		}
 
 

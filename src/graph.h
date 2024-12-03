@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <string>
 #include <iomanip> 
+#include "../dependencies\include\nlohmann\json.hpp"
 
 using namespace std;
 
@@ -38,8 +39,21 @@ public:
         }
     }
 
-    MyGraph(const string& fileName) {
-        ifstream file(fileName);
+    MyGraph(const string& jsonFileName) {
+
+        nlohmann::json objJson;
+
+        fstream fileInput;
+        fileInput.open(jsonFileName);
+
+        fileInput >> objJson;
+
+        fileInput.close();
+
+        string graphFile = objJson["graph"];
+        bool bidirectional = objJson["bidirectional"];
+
+        ifstream file(graphFile);
 
         int vertex1, vertex2, length;
         if (file.good()) {
@@ -59,6 +73,7 @@ public:
     }
 
     MyGraph(const string& fileName, bool bidirectional) : bidirectional(bidirectional) {
+
         ifstream file(fileName);
 
         int vertex1, vertex2, length;

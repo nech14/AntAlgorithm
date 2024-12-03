@@ -1,0 +1,18 @@
+{
+
+    "a": 2,
+    "b": 3,
+    "p": 0.1,
+    "q": 1.0,
+    "start_r": 0.1,
+    "minChanceTurn": 0.0,
+    "work_with_alive_ants": true,
+    "start_node": -1,
+    "graph": "graphs\\synthetic.txt",
+    "bidirectional": false,
+    "count_ants": 51,
+    "count_repetitions": 1000000,
+    "logs": false
+    
+
+}
