@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import json
 import os
 
 filename = "result/output.txt"
@@ -10,6 +11,9 @@ best_way = ""
 best_way_len = 100000
 chance_way = 0.
 amount_pheromone_on_way = 0.
+
+count_checks = 51
+time_sleep = 0.1
 
 def read_and_delete_lines(filename, num_lines):
     """
@@ -71,12 +75,15 @@ def plot_data(data):
     data_chance_way = []
     data_amount_pheromone_on_way = []
 
+    global count_checks
+    global time_sleep
+
     while True:
-        lines = read_and_delete_lines(filename, 51)
+        lines = read_and_delete_lines(filename, count_checks)
 
         # Проверяем, есть ли новые данные
         if not lines:
-            plt.pause(0.1)  # Ждём немного перед следующим циклом
+            plt.pause(time_sleep)  # Ждём немного перед следующим циклом
             continue
 
         global last_result
@@ -112,8 +119,23 @@ def plot_data(data):
 
         # ax.legend()
         plt.draw()
-        plt.pause(0.01)  # Обновляем график каждые 1 секунду
+        plt.pause(time_sleep)  # Обновляем график каждые 1 секунду
+
+
+def udpdate_settings(file_path = "settings.json"):
+    with open(file_path, 'r', encoding='utf-8') as file:
+        data = json.load(file)  # Загружаем JSON-данные
+    
+    global count_checks
+    global time_sleep
+
+    count_checks = int(data["count_checks"])
+    time_sleep = float(data["time_sleep"])
+
+
+
 
 if __name__ == "__main__":
+    udpdate_settings()
     data = []
     plot_data(data)

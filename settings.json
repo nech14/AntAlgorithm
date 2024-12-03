@@ -12,7 +12,9 @@
     "bidirectional": false,
     "count_ants": 51,
     "count_repetitions": 1000000,
-    "logs": false
+    "logs": false,
+    "count_checks": 51,
+    "time_sleep": 0.01
     
 
 }

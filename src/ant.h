@@ -82,6 +82,18 @@ public:
 		return answer;
 	}
 
+	double get_random_number() {
+		
+		// Создаем генератор случайных чисел
+		random_device rd;  // Источник случайности (аппаратный или псевдослучайный)
+		mt19937 gen(rd()); // Генератор случайных чисел (Mersenne Twister)
+
+		// Определяем распределение от 0 до 1
+		uniform_real_distribution<> dist(0.0, 1.0);
+
+		return dist(gen);
+	}
+
 	int choosingWay(vector<double> weights_ways, double sum_weight) {
 
 		if (weights_ways.size() <= 0 || sum_weight == 0)
@@ -91,42 +103,19 @@ public:
 			return 0;
 		}
 		
-		// Создаем генератор случайных чисел
-		random_device rd;  // Источник случайности (аппаратный или псевдослучайный)
-		mt19937 gen(rd()); // Генератор случайных чисел (Mersenne Twister)
-
-		// Определяем распределение от 0 до 1
-		uniform_real_distribution<> dist(0.0, 1.0);
-
-		double random_number = dist(gen);
+		double random_number = get_random_number();
 
 		double normalized_chance;
 		double accumulate_probability = 0.;
 
-		int selected_way;
-		/*cout << "sum: " << sum_weight << " | " << weights_ways << '\n';*/
-		
-		
+		int selected_way;	
 
 		for (int w = 0; w < weights_ways.size(); w++) {
 
 			normalized_chance = weights_ways[w] / sum_weight;
 			accumulate_probability += normalized_chance;
-						
-		/*	cout << "weights_ways[w]: " << weights_ways[w] << '\n';
-			cout << "normalized_chance: " << normalized_chance << '\n';*/
-			
-			/*cout << "accumulate_probability: " << accumulate_probability << '\n';
-			cout << "random_number: " << random_number << '\n';
-			cout << "w: " << w << '\n';*/
-
-			
+									
 			if (random_number <= accumulate_probability) {
-				//if (start_note >= 24)
-				//	cout << "chance_way: " << chance_way << " normalized_chance:" << normalized_chance << "sum: " << sum_weight << " | " << weights_ways[w];
-				//chance_way *= normalized_chance;
-				//if (start_note >= 24)
-				//	cout << " new_chance_way: " << chance_way << " random_number:" << random_number << '\n';
 				return w;
 			}
 

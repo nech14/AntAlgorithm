@@ -31,12 +31,6 @@ run: $(TARGET)
 	./$(TARGET) &	
 	python $(PYTHON_SCRIPT) 
 
-# Очистка
-clean:
-	rm -f $(TARGET)
-	rm -f $(TARGET).exe
-
-
 stop:
 	@echo "Stopping all processes..."
 	killall my_program || true  # Для Linux/macOS
@@ -50,3 +44,10 @@ refresh:
 
 restart: stop refresh run
 	@echo "restart"
+
+
+# Очистка
+clean: stop refresh
+	rm -f $(TARGET)
+	rm -f $(TARGET).exe
+

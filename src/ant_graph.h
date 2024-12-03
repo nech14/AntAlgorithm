@@ -153,7 +153,7 @@ public:
 			col = awailable_ways[i];
 
 			value = weight_way(row, col);
-			/*cout << "value: " << value << '\n'*/;
+
 			weights_ways.push_back(value);
 			sum_weight += value;
 
@@ -229,14 +229,11 @@ public:
 
 		for (int r = 0; r < count_repetitions; r++){	
 
-			//cout << "create_ant" << '\n';
 			create_ants(start_node);
 
-			//cout << "work" << '\n';
 			for (int step = 0; step < countVertices; step++) {
 
 				for (int id_ant = 0; id_ant < count_ants; id_ant++) {
-					//std::cout << "step:" << step << " id_ant:" << id_ant << "\n";
 					Ant& ant = ants[id_ant];
 					if (!ant.alive)
 						continue;
@@ -247,17 +244,8 @@ public:
 
 			}
 
-			//cout << "update_matrix" << '\n';
 			update_r_matrix();
-			//cout << *this;
-
-			/*for (int id_ant = 0; id_ant < count_ants; id_ant++) {
-				std::cout << "ant_" << id_ant << ":" << ants[id_ant] << "\n";
-			}*/
-
-			//cout << "save" << '\n';
 			saveResult();
-			//cout << "delete_ant" << '\n';
 			delete_ants();
 		}
 		return;
