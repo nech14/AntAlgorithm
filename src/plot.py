@@ -52,9 +52,12 @@ def read_data(lines):
     global chance_way
 
     for line in lines:
-        row = list(map(float, line.split(',')))  # Разделяем строку на числа
-        all_data.append(row)
-        data.append(row[-1])
+        try:
+            row = list(map(float, line.split(',')))  # Разделяем строку на числа
+            all_data.append(row)
+            data.append(row[-1])
+        except:
+            continue
 
     
     try:

@@ -3,7 +3,7 @@
 
 #include <utility> 
 #include "../dependencies\include\nlohmann\json.hpp"
-
+#include <future>
 
 using namespace std;
 
@@ -30,6 +30,9 @@ public:
 	int start_node = -1;
 
 	bool logs = true;
+
+	bool async_mode_matrix = false;
+	bool async_mode_ants = false;
 
 
 	AntGraph() : MyGraph() {
@@ -59,6 +62,8 @@ public:
 		start_node = objJson["start_node"];
 		work_with_alive_ants = objJson["work_with_alive_ants"];
 		logs = objJson["logs"];
+		async_mode_matrix = objJson["async_mode_matrix"];
+		async_mode_ants = objJson["async_mode_ants"];
 
 		create_r_matrix();
 	}
@@ -184,7 +189,8 @@ public:
 	}
 
 	void update_r_matrix() {
-	
+		
+		vector<future<void>> futures;
 		for (int row = 0; row < countVertices; row++) {
 		
 			for (int col = 0; col < countVertices; col++) {
@@ -192,8 +198,23 @@ public:
 				if (col == row)
 					continue;
 
-				pheromone_update_on_way(row, col);
+				if (async_mode_matrix) {
+					futures.push_back(async(launch::async, [this, row, col]() {
+						pheromone_update_on_way(row, col);
+						}));
+				}
+				else {
+					pheromone_update_on_way(row, col);
+				}
 
+			}
+
+		}
+
+		if (async_mode_matrix) {
+		
+			for (auto& future : futures) {
+				future.get();
 			}
 
 		}
@@ -201,12 +222,17 @@ public:
 	
 	}
 
-	bool work_with_one_ant(Ant& ant) {
+	void work_with_one_ant(Ant& ant) {
+		if (!ant.alive)
+			return;
+
 		vector<int> availableEdges = getAvailableEdges(ant.last());
 		vector<int> availableWays = ant.getAvailableWays(availableEdges);
 
-		if (availableEdges.size() <= 0 || availableWays.size() <= 0)
-			return false; //dead ant
+		if (availableEdges.size() <= 0 || availableWays.size() <= 0){
+			ant.alive = false;
+			return; //dead ant
+		}
 
 		pair<vector<double>, double> result_weight_ways = weight_ways(ant.last(), availableWays);
 
@@ -218,13 +244,13 @@ public:
 		ant.chance_way *= result_weight_ways.first[id_selected_way] / result_weight_ways.second;
 		ant.add_way(selected_way, matrix[ant.last()][selected_way]);
 
-		return true; // alive ant
+		return; // alive ant
 	}
 
 
 	void antAlgorithm() {
 
-		std::cout << "start\n";
+		cout << "start\n";
 
 
 		for (int r = 0; r < count_repetitions; r++){	
@@ -232,15 +258,32 @@ public:
 			create_ants(start_node);
 
 			for (int step = 0; step < countVertices; step++) {
+				
+				vector<future<void>> futures;
+				
 
 				for (int id_ant = 0; id_ant < count_ants; id_ant++) {
-					Ant& ant = ants[id_ant];
-					if (!ant.alive)
-						continue;
+					Ant& ant = ants[id_ant];			
+					
 
-					ant.alive = work_with_one_ant(ant);
+					if (async_mode_ants) {
+						futures.push_back(async(launch::async, [this, &ant]() -> void {
+							return work_with_one_ant(ant);
+							}));
+
+					}
+
+					else {
+						work_with_one_ant(ant);
+					}
 				
-				}			
+				}		
+
+				if (async_mode_ants) {
+					for (auto& future : futures) {
+						future.get();
+					}
+				}
 
 			}
 
