@@ -92,8 +92,13 @@ public:
 		ants = new Ant[count_ants];
 
 		for (int i = 0; i < count_ants; i++) {
-			if (start_node < 0) {
+			if (start_node == -1) {
 				ants[i] = Ant(i % (countVertices), 0);
+			}
+			else if (start_node == -2) {
+				ants[i] = Ant();
+				ants[i].start_note = int(ants[i].get_random_number() * 100) % countVertices;
+				ants[i].len = 0;
 			}
 			else {
 				ants[i] = Ant(start_node, 0);
@@ -229,6 +234,7 @@ public:
 		vector<int> availableEdges = getAvailableEdges(ant.last());
 		vector<int> availableWays = ant.getAvailableWays(availableEdges);
 
+
 		if (availableEdges.size() <= 0 || availableWays.size() <= 0){
 			ant.alive = false;
 			return; //dead ant
@@ -237,10 +243,18 @@ public:
 		pair<vector<double>, double> result_weight_ways = weight_ways(ant.last(), availableWays);
 
 		int id_selected_way = ant.choosingWay(result_weight_ways);
+		if (id_selected_way < 0) {
+			if (availableEdges.size() > 0)
+				id_selected_way = 0;
+			else {
+				ant.alive = false;
+				return;
+			}			
+		}
 		int selected_way = availableWays[id_selected_way];
 
-
 		ant.amount_pheromone_on_way += r_matrix[ant.last()][selected_way];
+
 		ant.chance_way *= result_weight_ways.first[id_selected_way] / result_weight_ways.second;
 		ant.add_way(selected_way, matrix[ant.last()][selected_way]);
 
@@ -254,12 +268,13 @@ public:
 
 
 		for (int r = 0; r < count_repetitions; r++){	
-
+			if (r%1000 == 0)
+				cout << "iter: " << r << '\n';
 			create_ants(start_node);
 
 			for (int step = 0; step < countVertices; step++) {
-				
-				vector<future<void>> futures;
+				vector<future<void>> futures = vector<future<void>>();
+				//cout << "step: " << step << '\n';
 				
 
 				for (int id_ant = 0; id_ant < count_ants; id_ant++) {
@@ -271,12 +286,9 @@ public:
 							return work_with_one_ant(ant);
 							}));
 
-					}
-
-					else {
+					}else {
 						work_with_one_ant(ant);
 					}
-				
 				}		
 
 				if (async_mode_ants) {

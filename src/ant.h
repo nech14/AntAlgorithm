@@ -120,6 +120,7 @@ public:
 			}
 
 		}
+		return weights_ways.size()-1;
 	
 	}
 
