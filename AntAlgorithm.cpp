@@ -25,7 +25,7 @@ int main()
 
     AntGraph graph("settings.json");
 
-    std::cout << graph ;
+    // std::cout << graph ;
 
     graph.antAlgorithm();
 
